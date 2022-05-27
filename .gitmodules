@@ -1,8 +1,0 @@
-[submodule "wraithsec.github.io"]
-	path = wraithsec.github.io
-	url = git@github.com:wraithsec/wraithsec.github.io.git
-	branch = gh-pages
-[submodule "docs"]
-	path = docs
-	url = git@github.com:wraithsec/wraithsec.github.io.git
-	branch = gh-pages

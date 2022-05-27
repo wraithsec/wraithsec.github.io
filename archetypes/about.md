@@ -1,6 +1,0 @@
----
-draft: false
-name = '' 
-bio = ''
----
-
