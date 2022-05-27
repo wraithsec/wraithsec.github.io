@@ -1,0 +1,125 @@
+baseurl = "https://wraithsec.github.io/"
+languageCode = "en-us"
+title = "wraith-infosec"
+theme = "hello-friend-ng"
+canonifyurls = true
+
+PygmentsCodeFences = true
+PygmentsStyle = 'dracula'
+paginate = 10
+rssLimit = 10
+
+publishDir   = "docs"
+contentDir   = "content"
+dataDir      = "data"
+layoutDir    = "layouts"
+enableRobotsTXT = true
+enableGitInfo   = false
+enableEmoji     = true
+
+#[permalinks] 
+#    posts = "/posts/:year/:month/:title/"
+
+[author]
+    name = 'wraith'
+
+[params]
+    dateform        = "Jan 2, 2006"
+    dateformShort   = "Jan 2"
+    dateformNum     = "2006-01-02"
+    dateformNumTime = "2006-01-02 15:04"
+
+    homeSubtitle = "Veteran & Security Researcher "
+    description = "Just your suprisingly mediocore security researcher."
+    disableReadOtherPosts = false 
+    enableSharingButtons = true
+    keywords = 'blog'
+#    enableThemeToggle = true
+
+[params.footer]
+    trademark = false
+    rss = true
+    copyright = false
+    author = true
+
+    topText = []
+    bottomText = [
+      "Powered by <a href=\"http://gohugo.io\">Hugo</a>",
+      "Made with &#10084; by <a href=\"https://github.com/rhazdon\">Djordje Atlialp</a>"
+    ]
+
+[params.favicon.color]
+    mask = '#4af626'
+    msapplication = "#4af626"
+    theme = "#4af626"
+
+[params.logo]
+    logoMark     = ">"
+    logoText     = "$ cd /home/"
+    logoHomeLink = "/"
+    logoCursorAnimate  = "2s"
+
+[params.portrait]
+    path     = "/img/wraith.png"
+    alt      = "Portrait"
+    maxWidth = "50px"
+
+#[params.commento]  For using commento to add commentable output
+#    url = ""
+
+[taxonomies] 
+    categories   = 'categories'
+    series       = 'series'
+    tags         = 'tags'
+
+[languages]
+[languages.en]
+    title = "wraith-infosec"
+    subtitle = "A simple theme for Hugo"
+    keywords = "blog, cybersecurity"
+    copyright = '<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>'
+    readOtherPosts = "Read other posts"
+
+[languages.en.params.logo]
+    logoText = "cd ~"
+    logoHomeLink = "/"
+
+[[menu.main]]  
+    name       = "/blog"
+    identifier = "blog"
+    url        = "/posts"
+    weight     = 1
+
+[[menu.main]]
+    name       = "/dev"
+    weight     = 80
+    identifier = "dev"
+    url        = "/tags/dev"
+
+[[menu.main]]
+    name       = "/ctfs"
+    weight     = 94
+    identifier = "ctf"
+    url        = "/tags/ctf"
+
+[[menu.main]]
+    name       = "/about"
+    weight     = 95
+    identifier = "about"
+    url        = "/aboutme"
+
+[[params.social]]
+    name = 'email'
+    url = 'mailto:wraith.infosec@gmail.com'
+
+[[params.social]]
+    name = 'twitter'
+    url  = 'https://twitter.com/wraith_sec'
+
+[[params.social]]
+    name = 'reddit'
+    url  = 'https://www.reddit.com/user/wraith-sec'
+
+[[params.social]]
+    name = 'github'
+    url  = 'https://github.com/wraithsec'
