@@ -1,0 +1,363 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on wraith-infosec</title><link>https://blog.wraith-sec.com/posts/</link><description>Recent content in Posts on wraith-infosec</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>&lt;a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0&lt;/a></copyright><lastBuildDate>Sat, 28 May 2022 12:39:10 -0400</lastBuildDate><atom:link href="https://blog.wraith-sec.com/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Hello World</title><link>https://blog.wraith-sec.com/posts/hello-world/</link><pubDate>Sat, 28 May 2022 12:39:10 -0400</pubDate><guid>https://blog.wraith-sec.com/posts/hello-world/</guid><description>Setup your own blog!</description><content type="html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>Hello world! I&rsquo;m Wraith and in an attempt to better myself, I wanted to start a blog to blog about all things Cybersecurity &amp; IT. I figured what better way to start off than with a blog post about setting up Hugo to write a blog (so meta). In my attempts to set one up I ran into a lot of issues along the way, mainly outdated tutorials, or me not reading the docs fully (I have a bad habit about this and will skim them in an attempt to go fast).</p>
+<p>My hope is that I can make this a comprehensive &rsquo;tutorial&rsquo; on how to do the following, with explanations as to why I chose certain things:</p>
+<pre><code>- Make a hugo blog.
+- Host it on github pages with a source and page repository, you'll learn how to use github actions to help automate deployment here.
+- Host it on github pages using a custom domain.
+</code></pre>
+<p>Without further ado, as the great Samuel L. Jackson once said <em>&ldquo;Hold on to your butts&rdquo;</em>.</p>
+<h2 id="intro-to-hugo-and-pre-faq">Intro to Hugo and Pre-FAQ</h2>
+<h3 id="what-is-hugo">What is Hugo?</h3>
+<p><a href="https://gohugo.io/">https://gohugo.io/</a><br>
+Hugo is one of a few open-source static site generators, I&rsquo;m honestly not super familiar with them or web development as a whole really. Basically with very little setup and a multitude of themes to choose from, in about 10 minutes you can have a pretty nice looking blog for very little effort. Within those 10 minutes, you get it installed and download a theme and configure a .toml file and have it pretty much setup, it generates all of the static html/js/css for you and you can go on your merry way.</p>
+<p>It also has some pretty cool extra features. Like when testing your site locally, the <a href="https://gohugo.io/getting-started/usage/#livereload">LiveReload</a> feature (I&rsquo;m using this as I write this post) will automatically detect changes and update it in your browser on the fly. There is also <a href="https://gohugo.io/content-management/shortcodes/">shortcodes</a> which make it relatively easy to embed things like youtube videos or other content within your posts.</p>
+<h3 id="why-host-on-github-pages">Why host on github pages?</h3>
+<p>That question has a few answers:</p>
+<pre><code>1. Cost. You don't need to pay for hosting on a VPS (although this is admittedly cheap, DigitalOcean can cost like 6$ a month and is useful to at least have an account for.).
+2. Security. You don't have to worry about securing the box it sits on, Github handles that. They also handle getting TLS certificates set up so you can use HTTPS like a good little internet steward.
+3. Version Control. If you don't know git gives your source version control. If you ever accidentally `rm -rf` your blog locally, its still in github and you can just pull it. 
+4. Automation. You can also use some nifty stuff through Github Actions to automate deployment of your site and make it easy to manage. Its a bit of work, but once you get it setup its worth it in my opinion. 
+</code></pre>
+<h3 id="why-use-a-custom-domain-name">Why use a custom domain name?</h3>
+<p>Simply put, it just looks more professional in my opinion. Plus I personally have started slowly buying domains for projects or vanity so I may as well use them, especially since I can with gh-pages.</p>
+<h2 id="steps">Steps</h2>
+<h3 id="install-hugo-and-setup-blog">Install Hugo and Setup Blog</h3>
+<p>This is pretty easy, most if not all &rsquo;tutorials&rsquo; out there cover this, Hugo&rsquo;s <a href="https://gohugo.io/getting-started/quick-start/">Quick Start</a> does a good job of this(At the top, there is a link to [install] (<a href="https://gohugo.io/getting-started/installing">https://gohugo.io/getting-started/installing</a>) which shows you how to install Hugo on other systems, if you don&rsquo;t have Fedora Linux like I do, I would divert here. I&rsquo;m using Fedora Linux as my desktop so this tutorial will be focussed around doing this on Linux specifically.</p>
+<p>First off, you can just install via the terminal like so:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[wraith@ghostbustersinc ~]$ sudo dnf install hugo 
+</span></span><span style="display:flex;"><span>#. . . a bunch of install stuff . . .
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc ~]$ cd ~/blogs &amp;&amp; hugo new site myblog &amp;&amp; cd myblog
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Congratulations! Your new Hugo site is created in /home/wraith/blogs/myblog.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Just a few more steps and you&#39;re ready to go:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>1. Download a theme into the same-named folder.
+</span></span><span style="display:flex;"><span>   Choose a theme from https://themes.gohugo.io/ or
+</span></span><span style="display:flex;"><span>   create your own with the &#34;hugo new theme &lt;THEMENAME&gt;&#34; command.
+</span></span><span style="display:flex;"><span>2. Perhaps you want to add some content. You can add single files
+</span></span><span style="display:flex;"><span>   with &#34;hugo new &lt;SECTIONNAME&gt;/&lt;FILENAME&gt;.&lt;FORMAT&gt;&#34;.
+</span></span><span style="display:flex;"><span>3. Start the built-in live server via &#34;hugo server&#34;.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Visit https://gohugo.io/ for quickstart guide and full documentation.
+</span></span></code></pre></div><p>Congrats! You&rsquo;ve just created a blog! Look at you go sport.</p>
+<h3 id="themeing">Themeing</h3>
+<p>Now we need to add a theme which is also pretty easy. You just need to follow the output from <code>hugo new site myblog</code> above and go find a theme to download. For this blog (and tutorial), I chose &lsquo;hello-friend-ng&rsquo;. Now at this point you can choose a few methods to get the theme, download the theme and unpack it manually or use <code>git clone</code> or <code>git add submodule</code>. Downloading is potentially the easiest if you&rsquo;re not familiar with git, but if you to use git already&hellip; you may as well use it right? (Plus learning things is fun!). I&rsquo;ll explain both and their differences below:</p>
+<dl>
+<dt><strong>git clone</strong></dt>
+<dd>What most theme docs suggest you do. You clone the theme from the source repository as is. This means you won&rsquo;t get any updates if the theme gets updated however.</dd>
+<dd>
+<p>If you plan to just use the theme as-is, this is the easiest option (Its what I did, even though I made a tiny CSS change).</p>
+</dd>
+<dd>Git also won&rsquo;t like it when you push the outer repository (your blogs source control) and will omit the contents of the inner repository (the theme) so if you want to do this, just use git clone to get it to your machine, then do <code>rm -rf themes/hello-friend-ng/.git</code> to remove its status as a git repository.</dd>
+<dt><strong>git add submodule</strong></dt>
+<dd>You add the theme as a submodule, for this you&rsquo;ll likely want to <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks">fork</a> it on github so you can maintain your own repository and its changes on your account. You can also fetch updates for the fork to make sure your theme is as up to date with the creator&rsquo;s as possible.</dd>
+<dd>
+<p>This is your bet if you plan to do some heavy customization as you can add the submodule and make another repo for it in github so you can track versions.</p>
+</dd>
+</dl>
+<p>From the <a href="https://themes.gohugo.io/themes/hugo-theme-hello-friend-ng/">hello-friend-ng</a> docs, just choose one of the above methods. The theme needs to live in your &rsquo;themes/&rsquo; directory under the blog for it to be useable, and you can have as many as you want there incase you want to change it up often.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[wraith@ghostbustersinc myblog]$ git add submodule https://github.com/rhazdon/hugo-theme-hello-friend-ng.git themes/hello-friend-ng
+</span></span><span style="display:flex;"><span># . . . git stuff . . .
+</span></span></code></pre></div><dl>
+<dt>Now you have to edit your <em>config.toml</em> in the base directory of your blog. Not only does this configuration file contain information for the blog website as a whole, but many themes allow you to customize specific facets of the theme in here as well.</dt>
+<dd><em>Warning</em>: Each theme&rsquo;s configuration options may be different! Keep this in mind when switching themes.</dd>
+</dl>
+<p>Here is an example of my customized config file which is based off of <em>themes/hello-friend-ng/exampleSite/config.toml</em>, I&rsquo;ll explain what all the options do with comments:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>baseurl = <span style="color:#f1fa8c">&#34;https://blog.wraith-sec.com/&#34;</span>    <span style="color:#6272a4"># The url from which your blog should be accessed. If you don&#39;t use a custom domain, this should be https://username.github.io/.</span>
+</span></span><span style="display:flex;"><span>languageCode = <span style="color:#f1fa8c">&#34;en-us&#34;</span>
+</span></span><span style="display:flex;"><span>title = <span style="color:#f1fa8c">&#34;wraith-infosec&#34;</span>                    <span style="color:#6272a4"># The title on the front page.</span>
+</span></span><span style="display:flex;"><span>theme = <span style="color:#f1fa8c">&#34;hello-friend-ng&#34;</span>                   <span style="color:#6272a4"># Choose your theme here :) </span>
+</span></span><span style="display:flex;"><span>paginate = <span style="color:#bd93f9">10</span>                               <span style="color:#6272a4"># Number of results you&#39;ll see on a page</span>
+</span></span><span style="display:flex;"><span>rssLimit = <span style="color:#bd93f9">10</span>                               <span style="color:#6272a4"># Sets the limit of items for RSS feeds so someone can create a feed to watch for your blog</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>publishDir   = <span style="color:#f1fa8c">&#34;docs&#34;</span>                       <span style="color:#6272a4"># Where hugo publishes the static site files. This is what your browser interperets.</span>
+</span></span><span style="display:flex;"><span>contentDir   = <span style="color:#f1fa8c">&#34;content&#34;</span>                    <span style="color:#6272a4"># Where your posts will go.</span>
+</span></span><span style="display:flex;"><span>dataDir      = <span style="color:#f1fa8c">&#34;data&#34;</span>                       <span style="color:#6272a4"># Various data for the static site</span>
+</span></span><span style="display:flex;"><span>layoutDir    = <span style="color:#f1fa8c">&#34;layouts&#34;</span>                    <span style="color:#6272a4"># This is where layouts for each content type are defined, you can create custom ones here.</span>
+</span></span><span style="display:flex;"><span>enableRobotsTXT = <span style="color:#ff79c6">true</span>                      <span style="color:#6272a4"># This lets a search engine index your site, so you can be googled!</span>
+</span></span><span style="display:flex;"><span>enableEmoji     = <span style="color:#ff79c6">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[markup]                                    <span style="color:#6272a4">## This whole section sets your syntax highlighting for code fences, the 3 backticks: https://gohugo.io/content-management/syntax-highlighting/#highlighting-in-code-fences</span>
+</span></span><span style="display:flex;"><span>    [markup.highlight]
+</span></span><span style="display:flex;"><span>        codeFences = <span style="color:#ff79c6">true</span>
+</span></span><span style="display:flex;"><span>        tabWidth = <span style="color:#bd93f9">4</span>
+</span></span><span style="display:flex;"><span>        style = <span style="color:#f1fa8c">&#39;dracula&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#[permalinks]                                ## This allows you to set up url formatting for your various content types. I turn commented out b/c it makes finding specific posts a mess.</span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#    posts = &#34;/posts/:year/:month/:title/&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[author]
+</span></span><span style="display:flex;"><span>    name = <span style="color:#f1fa8c">&#39;wraith&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[params]                                    <span style="color:#6272a4">## Full of a bunch of general params for your site.</span>
+</span></span><span style="display:flex;"><span>    dateform        = <span style="color:#f1fa8c">&#34;Jan 2, 2006&#34;</span>         <span style="color:#6272a4"># Sets the forms the dates will be displayed.</span>
+</span></span><span style="display:flex;"><span>    dateformShort   = <span style="color:#f1fa8c">&#34;Jan 2&#34;</span>
+</span></span><span style="display:flex;"><span>    dateformNum     = <span style="color:#f1fa8c">&#34;2006-01-02&#34;</span>
+</span></span><span style="display:flex;"><span>    dateformNumTime = <span style="color:#f1fa8c">&#34;2006-01-02 15:04&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    homeSubtitle = <span style="color:#f1fa8c">&#34;Veteran &amp; Security Researcher&#34;</span>                          
+</span></span><span style="display:flex;"><span>    description = <span style="color:#f1fa8c">&#34;Just your suprisingly mediocore security researcher.&#34;</span>    <span style="color:#6272a4"># This may not be displayed, but a description when you link to your site.</span>
+</span></span><span style="display:flex;"><span>    disableReadOtherPosts = <span style="color:#ff79c6">false</span>                                           <span style="color:#6272a4"># Set to false, let you navigate forward/backward posts in a blog post.</span>
+</span></span><span style="display:flex;"><span>    enableSharingButtons = <span style="color:#ff79c6">true</span>
+</span></span><span style="display:flex;"><span>    keywords = <span style="color:#f1fa8c">&#39;blog&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[params.footer]                             <span style="color:#6272a4">## Controls content at the bottom</span>
+</span></span><span style="display:flex;"><span>    trademark = <span style="color:#ff79c6">false</span>
+</span></span><span style="display:flex;"><span>    rss = <span style="color:#ff79c6">true</span>
+</span></span><span style="display:flex;"><span>    copyright = <span style="color:#ff79c6">false</span>
+</span></span><span style="display:flex;"><span>    author = <span style="color:#ff79c6">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    topText = []
+</span></span><span style="display:flex;"><span>    bottomText = [
+</span></span><span style="display:flex;"><span>      <span style="color:#f1fa8c">&#34;Powered by &lt;a href=\&#34;http://gohugo.io\&#34;&gt;Hugo&lt;/a&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f1fa8c">&#34;Made with &amp;#10084; by &lt;a href=\&#34;https://github.com/rhazdon\&#34;&gt;Djordje Atlialp&lt;/a&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[params.favicon.color]                      <span style="color:#6272a4">## Sets the color for favicons (icons in your browser tab). I don&#39;t have one set so this is useless as is.</span>
+</span></span><span style="display:flex;"><span>    mask = <span style="color:#f1fa8c">&#39;#4af626&#39;</span>
+</span></span><span style="display:flex;"><span>    msapplication = <span style="color:#f1fa8c">&#34;#4af626&#34;</span>
+</span></span><span style="display:flex;"><span>    theme = <span style="color:#f1fa8c">&#34;#4af626&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[params.logo]                               <span style="color:#6272a4">## Again different per theme</span>
+</span></span><span style="display:flex;"><span>    logoMark     = <span style="color:#f1fa8c">&#34;&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>    logoText     = <span style="color:#f1fa8c">&#34;$ cd /home/&#34;</span>
+</span></span><span style="display:flex;"><span>    logoHomeLink = <span style="color:#f1fa8c">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span>    logoCursorAnimate  = <span style="color:#f1fa8c">&#34;2s&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4"># [params.portrait]                           ## Same as above. It should be noted that for images, they go in the &#39;static/&#39; directory. So that path is &#39;static/img/wraith.png&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#     path     = &#34;/img/wraith.png&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#     alt      = &#34;Portrait&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#     maxWidth = &#34;50px&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#[params.commento]                          ## For using commento (https://commento.io/) a way to add the ability to comment on posts to your blog! However it is paid, so I neglected to use it.</span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#    url = &#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[taxonomies]                                <span style="color:#6272a4">## Think of these as the equivalent of tags, this sets up the various tag types you can use. So I can mark posts as having tags, or being part of a series/etc.</span>
+</span></span><span style="display:flex;"><span>    categories   = <span style="color:#f1fa8c">&#39;categories&#39;</span>
+</span></span><span style="display:flex;"><span>    series       = <span style="color:#f1fa8c">&#39;series&#39;</span>
+</span></span><span style="display:flex;"><span>    tags         = <span style="color:#f1fa8c">&#39;tags&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">#dev, ctf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[languages]
+</span></span><span style="display:flex;"><span>[languages.en]
+</span></span><span style="display:flex;"><span>    title = <span style="color:#f1fa8c">&#34;wraith-infosec&#34;</span>
+</span></span><span style="display:flex;"><span>    subtitle = <span style="color:#f1fa8c">&#34;A simple theme for Hugo&#34;</span>
+</span></span><span style="display:flex;"><span>    keywords = <span style="color:#f1fa8c">&#34;blog, cybersecurity&#34;</span>
+</span></span><span style="display:flex;"><span>    copyright = <span style="color:#f1fa8c">&#39;&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    readOtherPosts = <span style="color:#f1fa8c">&#34;Read other posts&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[languages.en.params.logo]
+</span></span><span style="display:flex;"><span>    logoText = <span style="color:#f1fa8c">&#34;cd ~&#34;</span>
+</span></span><span style="display:flex;"><span>    logoHomeLink = <span style="color:#f1fa8c">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[menu.main]]                               <span style="color:#6272a4">## Adds main menu option buttons.</span>
+</span></span><span style="display:flex;"><span>    name       = <span style="color:#f1fa8c">&#34;/blog&#34;</span>                    <span style="color:#6272a4"># The &#39;link&#39; as it appears on the website.</span>
+</span></span><span style="display:flex;"><span>    identifier = <span style="color:#f1fa8c">&#34;blog&#34;</span>                     <span style="color:#6272a4"># The identifier, if you have multiple links with 1 identifier, only the LAST one will be displayed on the site. </span>
+</span></span><span style="display:flex;"><span>    url        = <span style="color:#f1fa8c">&#34;/posts&#34;</span>                   <span style="color:#6272a4"># The link the item resolves to. These exist within /content, this can be a folder (for blog posts) or a file.md for an aboutme page! </span>
+</span></span><span style="display:flex;"><span>    weight     = <span style="color:#bd93f9">1</span>                          <span style="color:#6272a4"># Measure of how high priority a menu item is, so 1 is highest (left most), 99 is lowest (right most). </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[menu.main]]
+</span></span><span style="display:flex;"><span>    name       = <span style="color:#f1fa8c">&#34;/dev&#34;</span>
+</span></span><span style="display:flex;"><span>    weight     = <span style="color:#bd93f9">80</span>
+</span></span><span style="display:flex;"><span>    identifier = <span style="color:#f1fa8c">&#34;dev&#34;</span>
+</span></span><span style="display:flex;"><span>    url        = <span style="color:#f1fa8c">&#34;/tags/dev&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[menu.main]]
+</span></span><span style="display:flex;"><span>    name       = <span style="color:#f1fa8c">&#34;/ctfs&#34;</span>
+</span></span><span style="display:flex;"><span>    weight     = <span style="color:#bd93f9">94</span>
+</span></span><span style="display:flex;"><span>    identifier = <span style="color:#f1fa8c">&#34;ctf&#34;</span>
+</span></span><span style="display:flex;"><span>    url        = <span style="color:#f1fa8c">&#34;/tags/ctf&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[menu.main]]
+</span></span><span style="display:flex;"><span>    name       = <span style="color:#f1fa8c">&#34;/about&#34;</span>
+</span></span><span style="display:flex;"><span>    weight     = <span style="color:#bd93f9">95</span>
+</span></span><span style="display:flex;"><span>    identifier = <span style="color:#f1fa8c">&#34;about&#34;</span>
+</span></span><span style="display:flex;"><span>    url        = <span style="color:#f1fa8c">&#34;/aboutme&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[params.social]]                           <span style="color:#6272a4">## This is where you&#39;ll add your social media buttons. Per the hello-friend-ng docs the list of &#39;names&#39; are in themes/hello-friend-ng/docs/svgs.md</span>
+</span></span><span style="display:flex;"><span>    name = <span style="color:#f1fa8c">&#39;email&#39;</span>
+</span></span><span style="display:flex;"><span>    url = <span style="color:#f1fa8c">&#39;mailto:mynamehere@gmail.com&#39;</span> <span style="color:#6272a4"># Just a syntax to allow people to click and immediately email you</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[params.social]]
+</span></span><span style="display:flex;"><span>    name = <span style="color:#f1fa8c">&#39;twitter&#39;</span>
+</span></span><span style="display:flex;"><span>    url  = <span style="color:#f1fa8c">&#39;https://twitter.com/mynamehere&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[params.social]]
+</span></span><span style="display:flex;"><span>    name = <span style="color:#f1fa8c">&#39;reddit&#39;</span>
+</span></span><span style="display:flex;"><span>    url  = <span style="color:#f1fa8c">&#39;https://www.reddit.com/user/mynamehere&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[params.social]]
+</span></span><span style="display:flex;"><span>    name = <span style="color:#f1fa8c">&#39;github&#39;</span>
+</span></span><span style="display:flex;"><span>    url  = <span style="color:#f1fa8c">&#39;https://github.com/mynamehere&#39;</span>
+</span></span></code></pre></div><p>Once you save this config.toml you should have pretty much what you need! Now lets make a post and test it! Open a terminal and run <code>hugo new posts/rickroll.md</code>.
+Once you&rsquo;ve done that open up <em>content/posts/rickroll.md</em> in your favorite editor (VIM is the only way 😄).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-md" data-lang="md"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>title: &#34;Rickroll&#34;
+</span></span><span style="display:flex;"><span>date: 2022-05-28T16:07:19-04:00
+</span></span><span style="display:flex;"><span>draft: true
+</span></span><span style="display:flex;"><span>---
+</span></span></code></pre></div><p>You&rsquo;ve successfully created your first post!  Notice at the top the piece between the <code>---</code>, thats called <a href="https://gohugo.io/content-management/front-matter/">Front Matter</a>, its a way for you to have metadata about your content.
+Lets go ahead and change that to see some of the options you can add and add some content!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>title: &#34;Rickroll&#34;
+</span></span><span style="display:flex;"><span>summary: &#34;Messed up my git workflow&#34;
+</span></span><span style="display:flex;"><span>description: &#39;Never gonna give you up...&#39; 
+</span></span><span style="display:flex;"><span>date: 2022-05-26T18:27:40-04:00         
+</span></span><span style="display:flex;"><span>draft: false                            
+</span></span><span style="display:flex;"><span>toc: true                               
+</span></span><span style="display:flex;"><span>tags:                                  
+</span></span><span style="display:flex;"><span>  - dev
+</span></span><span style="display:flex;"><span>series: [&#39;Go learn things!&#39;]
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>## RickRoll&#39;d
+</span></span><span style="display:flex;"><span>{&lt; youtube w7Ft2ymGmfc &gt;}}
+</span></span></code></pre></div><p><em>Add another { to the beginning of each curly brace line above, I had to take it off so Hugo wouldn&rsquo;t interperet it.</em></p>
+<dl>
+<dt>Lets break down the ambiguous things we just added.</dt>
+<dt><strong>date</strong></dt>
+<dd>This is the &lsquo;publish&rsquo; date of your content.</dd>
+<dt><strong>draft</strong></dt>
+<dd>This value determines if this is a draft piece of content or published. Hugo by default doesn&rsquo;t display drafts.</dd>
+<dt><strong>toc</strong></dt>
+<dd>This adds a table of contents similar to what I have at the top of this blogpost</dd>
+<dt><strong>tags|series</strong></dt>
+<dd>This is from those taxonomies earlier. Since we defined them, we can now &rsquo;tag&rsquo; content to be able to be grouped together.</dd>
+<dd>
+<p>For tags, you can click on these at the bottom of the post, or just got to &lsquo;yoursite/tags/tagname&rsquo; and view them all together. For the series you should be able to do the same via url, or make a link button to it!</p>
+</dd>
+<dt><strong>{&lt; youtube goblygook &gt;}</strong></dt>
+<dd>This is one of those shortcodes I spoke of earlier. If you go to the docs you&rsquo;ll see how to use them for various media.</dd>
+</dl>
+<p>Awesome! I think we&rsquo;ve got a good first step here. Now lets test it out! In a terminal run <code>hugo server -D</code>, then in your browser navigate to <em>http://localhost:1313</em>. -D tells hugo to publish even drafts (we don&rsquo;t need that here however), and by default serves it up on 127.0.0.1 on port 1313 for you to access.</p>
+<p><img src="/img/hello-world/blogpage.png" alt="Success"></p>
+<p>Our first post! Great success!
+<img src="/img/hello-world/greatsuccess.gif" alt="Great Success"></p>
+<h3 id="setup-the-repositories">Setup the repositories</h3>
+<p>Now that we have a blog with a post in it. We want to set up version control for the source, as well as another repository for the github page. But couldn&rsquo;t you just put both the source code and the published site into one repository?</p>
+<p>Why yes, yes you can. However, for a github-pages site to work, it must be a public repository. So whenever you are working on a new post that you haven&rsquo;t released yet, someone could come along and manually delve into your content directory and see it. That would suck if for example, it was the potentially first blog post about a new strain of malware to get you noteriaty as a security researcher and someone else just stole it before you could publish it. You could also choose to just host your source offline, and not in git. However, if you accidentally destroy it, then its all gone and you&rsquo;d have to go through the trouble of editing the published repo manually.</p>
+<h4 id="source-repo">Source repo</h4>
+<p>So lets get into it, first lets create that repository in github, for this one make it private.
+<img src="/img/hello-world/git_new_repo.png" alt="New Source"></p>
+<p>From there, follow the directions given on the page for the repo to create a local one and connect it to use the one on github as its origin. Notice, I do <code>git add .</code> instead of <code>git add README.md</code> here, thats because <em>add .</em> makes git track ALL files in the current working directory.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>git init
+</span></span><span style="display:flex;"><span>git add .
+</span></span><span style="display:flex;"><span>git commit -m &#34;first commit&#34;
+</span></span><span style="display:flex;"><span>git branch -M main
+</span></span><span style="display:flex;"><span>git remote add origin git@github.com:wraithsec/myblogsource.git
+</span></span><span style="display:flex;"><span>git push -u origin main
+</span></span></code></pre></div><p>Small sidenote here, I use SSH instead of HTTPS (notice how the link is git@github instead of <a href="https://github.com">https://github.com</a>) because with an key for SSH I can do pulls/pushes without having to ever type my password in. There is a part of this tutorial that will go over creating those keys and setting them for <em>repositories</em>, however if you wish to set it for your user there is a fine tutorial on how to use <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh">SSH</a>.</p>
+<p>Next, we&rsquo;ll need to do this later but before moving on to the pages repository, I want to do a little bit of setup for our automatic deployment so that every time we push a change to the source control repository, it will regenerate and deploy to github-pages.</p>
+<p>First, we need to add a <em>.gitignore</em> file and make sure docs/ is in there. This will ensure that our source repository won&rsquo;t track our static output for the pages site.</p>
+<p>Second, we will want to get an ssh key ready for the auto deployment. This is required by the github actions we will make for this repo later to automatically deploy changes.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[wraith@ghostbustersinc myblog]$ echo &#34;docs&#34; &gt;&gt; .gitignore
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc myblog]$ ssh-keygen -t rsa -b 4096 -C &#34;$(git config user.email)&#34; -f ~/.ssh/myblog-gh-pages -N &#34;&#34;
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc myblog]$ ls -l ~/.ssh/myblog* 
+</span></span><span style="display:flex;"><span>-rw-------. 1 wraith wraith 3389 May 28 17:56 /home/wraith/.ssh/myblog-gh-pages
+</span></span><span style="display:flex;"><span>-rw-r--r--. 1 wraith wraith  751 May 28 17:56 /home/wraith/.ssh/myblog-gh-pages.pub
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc myblog]$ cat ~/.ssh/myblog-gh-pages
+</span></span><span style="display:flex;"><span>-----BEGIN OPENSSH PRIVATE KEY-----
+</span></span><span style="display:flex;"><span>b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
+</span></span><span style="display:flex;"><span>NhAAAAAwEAAQAAAgEAu275sx1YLTE4MPiqPcPk3vs9SWLuIMeyh9t1vBZbaOJW0BCAyY8P
+</span></span><span style="display:flex;"><span>2hVXgM93857jX9+2pA+n/032luOX2ozNXVPf1VGXq+bXeAo4fGuV42K5fcxwBqsFzG+esr
+</span></span><span style="display:flex;"><span>NbQPDfRdae7FySeJeToxG3FFTVE41PkptZ6qwS7ztmvQk0Xvy8iCrz/Dd8LY6N9j2eatwK
+</span></span><span style="display:flex;"><span>. . . OPENSSH KEY STUFF . . .
+</span></span><span style="display:flex;"><span>nAcRmhYQr0KtsbRwo5SKakuxi4NDTLDvFa7Wxe+D1bw6VcQufq5tYNs9Kj9dkPIc++e1fB
+</span></span><span style="display:flex;"><span>Tjs0Y7rHujcAAAAZc29saWRfaGFidVJFWEBvdXRsb29rLmNvbQEC
+</span></span><span style="display:flex;"><span>-----END OPENSSH PRIVATE KEY-----
+</span></span></code></pre></div><p>Now that you have that key made, you&rsquo;ll want to navigate to where you can place the key as a environmental variable (this is for the github action which we will setup at the last step). From the repostories &lsquo;code&rsquo; page click <code>settings &gt; secrets (left side) &gt; actions &gt; New repository secret</code>, name it <code>ACTIONS_DEPLOY_KEY</code> and paste the entire value of the OPENSSH PRIVATE KEY in there, then click <code>add secret</code>.
+<img src="/img/hello-world/add_priv_key.png" alt="Deploy Key"></p>
+<h4 id="setting-up-the-pages-repo">Setting up the pages Repo</h4>
+<p>Now we want to setup the pages repo, this will be the repository that contains all of our published static html. It has to be named <em>username.github.io</em> and MUST be <em>public</em>. Other than that, follow the same procedure as before to create it on Github with the afformentoined differences.
+<img src="/img/hello-world/ghpages_repo.png" alt="gh-pages repo"></p>
+<p>Now we need to do a few extra steps before making this repository correctly, first we run <code>hugo</code> to have hugo generate the static site content, by default this is in <em>docs/</em>. Next we go inside, and init it to our newly created git repository. Since we made the gitignore earlier telling the source repository to ignore the <em>docs/</em> folder, when we push that repository it won&rsquo;t complain that there is another repository inside of it, if you didn&rsquo;t want to use the .gitignore file, you would need to ensure you add this as a submodule to the parent repository. I just thought the ignore was easier.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>hugo 
+</span></span><span style="display:flex;"><span>cd docs
+</span></span><span style="display:flex;"><span>git init
+</span></span><span style="display:flex;"><span>git add .
+</span></span><span style="display:flex;"><span>git commit -m &#34;first commit&#34;
+</span></span><span style="display:flex;"><span>git branch -M main
+</span></span><span style="display:flex;"><span>git remote add origin git@github.com:wraithsec/yourusername.github.io.git
+</span></span><span style="display:flex;"><span>git push -u origin main
+</span></span></code></pre></div><p>From here we need to setup the public deploy key from earlier, this is what will allow the previous repositories github action to push contents to this repository. From the <code>code</code> page here click <code>settings &gt; deploy keys (left side) &gt; add deploy key</code> and add your public key, simply doing <code>cat ~/.ssh/myblog-gh-pages.pub</code> should work (it may not be there if you didn&rsquo;t save it there). Make sure you allow write access for this key, paste the public key contents in there and click <code>add key</code>.
+<img src="/img/hello-world/deploy_key.png" alt="Deploy Key"></p>
+<p><img src="/img/hello-world/deployed_key.png" alt="Deployed Key">
+Now, inside of the settings page, go to the <code>Pages</code> tab under <code>Code and automation</code>, this is the page that will allow us to serve this page using github pages. Choose the branch as <em>main</em> and the folder as / then click <code>save</code>. Once you do that go ahead and go back to your code page and as soon as you see the green check near the commit, navigate to <em>yourusername.github.io</em>. At this point you should see your page, happy days!</p>
+<p>At this point, its going to get kind of cumbersome to update your site, if you make a config change or anything, you&rsquo;ll need to do a few steps like below.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[wraith@ghostbustersinc docs]$ cd ~/myblog
+</span></span><span style="display:flex;"><span>. . . Makes changes . . . 
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc docs]$ git add . &amp;&amp; git commit -m &#34;A new commit has appeared&#34; &amp;&amp; git push 
+</span></span><span style="display:flex;"><span>. . . just git things . . .
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc docs]$ hugo &amp;&amp; cd docs 
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc docs]$ git add . &amp;&amp; git commit -m &#34;Ive added new content&#34; &amp;&amp; git push 
+</span></span><span style="display:flex;"><span>. . . more git things . . .
+</span></span></code></pre></div><p>That can be annoying. For every change, you&rsquo;ll have to make two pushes to two separate repositoies, there MUST be a better way. And there is 😄. Using Github Actions we can automate workflows every time certain events occur, lucky for us there are already ways to automate deployment of a page, for now go back to the source repository and add the following file in there, you can read teh comments to get context on what the various pieces are.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[wraith@ghostbustersinc docs]$ cd ~/myblog &amp;&amp; mkdir -p .github/workflows &amp;&amp; touch .github/workflows/gh-pages.yml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>### CONTENT of gh-pages.yml to add
+</span></span><span style="display:flex;"><span>name: hugo publish                               # name of the action
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>on:
+</span></span><span style="display:flex;"><span>  push:
+</span></span><span style="display:flex;"><span>    branches:
+</span></span><span style="display:flex;"><span>    - main                                        # Set a branch to deploy from
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>jobs:
+</span></span><span style="display:flex;"><span>  build-deploy:                                   # This runs hugo on your repository from a vm and then also publishes it to the specified repository using the specified key.
+</span></span><span style="display:flex;"><span>    runs-on: ubuntu-20.04
+</span></span><span style="display:flex;"><span>    steps:
+</span></span><span style="display:flex;"><span>      - uses: actions/checkout@v2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - name: Setup Hugo
+</span></span><span style="display:flex;"><span>        uses: peaceiris/actions-hugo@v2
+</span></span><span style="display:flex;"><span>        with:
+</span></span><span style="display:flex;"><span>          hugo-version: &#39;latest&#39;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - name: Build                                                # 
+</span></span><span style="display:flex;"><span>        run: hugo --minify
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - name: Deploy
+</span></span><span style="display:flex;"><span>        uses: peaceiris/actions-gh-pages@v3
+</span></span><span style="display:flex;"><span>        with:
+</span></span><span style="display:flex;"><span>          external_repository: wraithsec/yourusername.github.io     # The repository to publish.
+</span></span><span style="display:flex;"><span>          publish_branch: main                                      # The branch to publish to (on the external repository)
+</span></span><span style="display:flex;"><span>          publish_dir: ./docs                                       # The branch to publish from (from the top repo)
+</span></span><span style="display:flex;"><span>          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}             # Grabs that secret private key we added earlier
+</span></span><span style="display:flex;"><span>          allow_empty_commit: false
+</span></span><span style="display:flex;"><span>          commit_message: ${{ github.event.head_commit.message }}
+</span></span><span style="display:flex;"><span>### CONTENT 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc docs]$  git add . &amp;&amp; git commit -m &#34;Added a deployment action!&#34; &amp;&amp; git push
+</span></span></code></pre></div><p>Now from then on, any time we make a change on the <em>main</em> branch and push it, it will automatically build the new content and push that to the main branch of our github pages repository! How cool is that?! An example is below&hellip;</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[wraith@ghostbustersinc myblog]$ git add .
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc myblog]$ git commit -m &#34;Changed subtitle in config&#34;
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc myblog]$ git push
+</span></span></code></pre></div><p>The yellow dot shows the action is currently running, you can click on it or the actions tab at the top to go view the action as it runs. When it runs successfully you&rsquo;ll see a green checkmark.
+<img src="/img/hello-world/building.png" alt="Building"></p>
+<p><img src="/img/hello-world/built.png" alt="Done"></p>
+<p>And if you navigate to your <em>yourusername.github.io</em> repository, you will see a commit happend not too long ago with your new content. The commit message is the giveaway that the action from the previous repository made the commit. Yay automation!
+<img src="/img/hello-world/automation.png" alt="Automagic"></p>
+<h3 id="adding-a-custom-domain-name">Adding a Custom Domain Name</h3>
+<p>Now you could just stop here, and there is nothing wrong with that. But by golly, I&rsquo;ve bought these domain names so I&rsquo;m going to use them. <em>Because I don&rsquo;t want to cause any issues with my current setup I am going to show examples using this blog</em>.</p>
+<p>First, you need to own a domain. I use namecheap personally, and thats what I&rsquo;ll use to show my examples, go to your registrar page and somewhere there should be settings for DNS, for me its under <code>manage &gt; advanced DNS</code>. You need to create a CNAME record and an A record. This will take a few moments to propogate and could be anywhere up to 24 hours.
+<img src="/img/hello-world/dns.png" alt="DNS"></p>
+<dl>
+<dt><strong>A record</strong></dt>
+<dd>This is a record which points your domain name at a specific host, in this instance we&rsquo;re pointing my domain (wraith-sec.com) at the github.io servers.</dd>
+<dd>The @ in the &lsquo;host&rsquo; field specifies the root domain points to those ip addresses.</dd>
+<dt><strong>CNAME record</strong></dt>
+<dd>This provides a alias for a hostname, in this particualr case, we&rsquo;re telling it that blog.wraith-sec.com aliases to wraithsec.github.io (our github page we setup remember?), this triggers a second DNS lookup to give us one of the a records above.</dd>
+</dl>
+<p>Next you&rsquo;ll want to make two changes to your source repository. First you want <code>static/CNAME</code> to exist and contain <code>yourcustomdomain.com</code> that you own from <em>[insert domain provider here]</em>. Secondly, you want to update the <em>baseUrl</em> of the <em>config.toml</em> to specify the new domain. Example below of my setup.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[wraith@ghostbustersinc wraithblog]$ cat static/CNAME
+</span></span><span style="display:flex;"><span>blog.wraith-sec.com
+</span></span><span style="display:flex;"><span>[wraith@ghostbustersinc wraithblog]$ head config.toml
+</span></span><span style="display:flex;"><span>baseurl = &#34;https://blog.wraith-sec.com/&#34;
+</span></span></code></pre></div><p>After that do an add/commit/push of the source repository and navigate to your pages tab under settings for the public repository. You should see the custom domain name fill in automatically (this is thanks to the CNAME file), if not fill it in yourself and click save.</p>
+<p>Github will attempt to do a DNS check at this point, to make sure it exists. It will then attempt to verify you own the domain, this is done through a TXT record where it tells you to create a specific TXT record with a specific value, think of it as a one time pad. When you do that, it will check for that record and upon seeing it will know you own the domain. As long as your names all match up (your records in your dns provider, the CNAME, and the baseUrl of config.toml) Github should automatically reach out to Let&rsquo;s Encrypt, generate TLS certs for your blog page and set it up so that https just works when browsing to your blog :). At this point I enforced https on my site personally.</p>
+<h2 id="closing">Closing</h2>
+<p>And thats it! It may take a little while for everything to propogate, but within the day at the latest you should have a fully functioning blog with a custom domain at <a href="https://yourusername.com">https://yourusername.com</a>! All hosted on Github and source controlled and everything. If there are any discrepencies you run into here, feel free to reach out to me and I will do my best to correct them!</p>
+]]></content></item></channel></rss>
